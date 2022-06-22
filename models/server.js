@@ -1,14 +1,23 @@
 const express = require('express');
 const bodyParser = require('body-parser')
 const cors = require('cors');
+const { dbConnection } = require('../database/config.db');
+const { validarCampos } = require('../middlewares/validar_campos');
 class Server{
     constructor(){
         this.app = express()
         this.port = process.env['PORT']
         this.userPath= '/api/users'//* esto es opcional
 
+        //* Connectar base de datos
+        this.connectDb()
         //* Middleweres
         this.middlewares()
+    }
+
+    //? de esta forma se pueden llamar varias conexiones
+    async connectDb(){
+        await dbConnection()
     }
 
     middlewares(){
