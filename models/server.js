@@ -1,42 +1,45 @@
-const express = require('express');
-const bodyParser = require('body-parser')
-const cors = require('cors');
-const { dbConnection } = require('../database/config.db');
-const { validarCampos } = require('../middlewares/validar_campos');
-class Server{
-    constructor(){
-        this.app = express()
-        this.port = process.env['PORT']
-        this.userPath= '/api/users'//* esto es opcional
+const express = require("express");
+const bodyParser = require("body-parser");
+const cors = require("cors");
+const { dbConnection } = require("../database/config.db");
+const { validarCampos } = require("../middlewares/validar_campos");
+class Server {
+  constructor() {
+    this.app = express();
+    this.port = process.env["PORT"];
 
-        //* Connectar base de datos
-        this.connectDb()
-        //* Middleweres
-        this.middlewares()
-    }
+    this.userPath = "/api/users"; //* esto es opcional
+    this.authPath = "/api/auth";
 
-    //? de esta forma se pueden llamar varias conexiones
-    async connectDb(){
-        await dbConnection()
-    }
+    //* Connectar base de datos
+    this.connectDb();
+    //* Middleweres
+    this.middlewares();
+  }
 
-    middlewares(){
-        // uso de cors
-        this.app.use(cors())
-        // Parseo de los datos a json
-        this.app.use(bodyParser.json())
-        this.app.use(bodyParser.urlencoded({extended:false}))
-        //Directorio publico
-        this.app.use(express.static('public'))
-    }
+  //? de esta forma se pueden llamar varias conexiones
+  async connectDb() {
+    await dbConnection();
+  }
 
-    routes(){
-       this.app.use(this.userPath,require('../routes/user.routes'))
-    }
-    runServer(){
-        this.app.listen(this.port,()=>{
-            console.log(`Pendiente al http://localhost:${this.port}`);
-        })
-    }
+  middlewares() {
+    // uso de cors
+    this.app.use(cors());
+    // Parseo de los datos a json
+    this.app.use(bodyParser.json());
+    this.app.use(bodyParser.urlencoded({ extended: false }));
+    //Directorio publico
+    this.app.use(express.static("public"));
+  }
+
+  routes() {
+    this.app.use(this.userPath, require("../routes/user.routes"));
+    this.app.use(this.authPath, require("../routes/auth.routes"));
+  }
+  runServer() {
+    this.app.listen(this.port, () => {
+      console.log(`Pendiente al http://localhost:${this.port}`);
+    });
+  }
 }
-module.exports = Server
+module.exports = Server;

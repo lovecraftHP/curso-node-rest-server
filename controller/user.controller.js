@@ -96,15 +96,18 @@ class UserController {
   };
   userDelete = async (req = request, res = response) => {
     const { id } = req.params;
-
+    const uid = req.uid;
     //* la cuestion es que asi lo borramos y no sabriamos quien se fue
+    //* osea que usuario se elimino
     //const { name } = await User.findOneAndRemove(id);
 
     //? de esta forma es mucho mejor, usando el estado
     const { name } = await User.findByIdAndUpdate(id, { state: false });
-
+    //!esto no se puede hacer ya que causa dependencias circulares
+    //const usuarioAuth = req.usuario;
     res.json({
       msg: `Se borro el usuario ${name}`,
+      //usuarioAuth,
     });
   };
 }
